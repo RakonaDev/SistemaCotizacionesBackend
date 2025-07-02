@@ -9,7 +9,8 @@ class CotizacionGeneral extends Model
     protected $table = 'cotizaciones_generales';
 
     protected $fillable = [
-        'fecha',
+        'fecha_inicial',
+        'fecha_final',
         'dias_entrega',
         'descripcion',
         'monto_total',

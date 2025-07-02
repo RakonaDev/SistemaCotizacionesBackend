@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('cotizaciones_generales', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('fecha');
+            $table->dateTime('fecha_inicial');
+            $table->dateTime('fecha_final');
             $table->integer('dias_entrega');
             $table->string('descripcion');
             $table->decimal('monto_total');

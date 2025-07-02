@@ -12,6 +12,9 @@ class Cotizacion extends Model
         'id_cotizacion_general',
         'gg',
         'utilidad',
+        'costo_directo',
+        'descripcion',
+        'cantidad',
         'total_cotizaciones',
     ];
 

@@ -17,6 +17,9 @@ return new class extends Migration
             $table->unsignedBigInteger('id_cotizacion_general');
             $table->foreign('id_cotizacion_general')->references('id')->on('cotizaciones_generales')->onDelete('Cascade');
 
+            $table->string('descripcion');
+            $table->integer('cantidad');
+            $table->decimal('costo_directo');
             $table->decimal('gg');
             $table->decimal('utilidad');
             $table->decimal('total_cotizaciones');

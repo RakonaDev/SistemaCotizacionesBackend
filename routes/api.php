@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientesController;
+use App\Http\Controllers\CotizacionController;
 use App\Http\Controllers\CotizacionGeneralController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\UsuarioController;
@@ -16,6 +17,6 @@ Route::middleware('auth.api')->group(function () {
     Route::apiResource('clientes', ClientesController::class);
     Route::get('/buscarCliente', [ClientesController::class,'buscar']);
     Route::apiResource('servicios', ServicioController::class);
-    Route::apiResource('cotizaciones', CotizacionGeneralController::class);
+    Route::apiResource('cotizaciones', CotizacionController::class);
 });
 
