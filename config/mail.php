@@ -115,4 +115,20 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    'markdown' => [
+        'theme' => 'default', // Cambia de 'default' a 'custom'
+        'paths' => [
+            resource_path('views/vendor/mail'),
+        ],
+    ],
+
+    // Personalización de colores (si usas un tema personalizado)
+    'theme_colors' => [
+        'primary' => '#0B2447',
+        'secondary' => '#19376D',
+        'success' => '#576CBC',
+        'error' => '#e74c3c',
+        'warning' => '#f39c12',
+        'info' => '#A5D7E8',
+    ],
 ];

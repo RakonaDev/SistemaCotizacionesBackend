@@ -98,6 +98,8 @@ class ServicioController extends Controller
 
             $servicio->update($validator->validated());
 
+            
+
             return response()->json($servicio);
         } catch (QueryException $e) {
             return response()->json([

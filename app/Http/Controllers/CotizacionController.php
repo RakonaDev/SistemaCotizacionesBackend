@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\CotizacionEnviada;
+use App\Models\Cliente;
 use App\Models\Cotizacion;
 use App\Models\CotizacionCaja;
 use App\Models\CotizacionDetail;
 use App\Models\CotizacionGeneral;
+use Barryvdh\DomPDF\Facade\Pdf;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class CotizacionController extends Controller
@@ -80,11 +84,26 @@ class CotizacionController extends Controller
 
             DB::commit();
 
+            $cliente = Cliente::find($request->id_cliente);
+
+            // 🔵 Generar PDF con vista Blade
+            $pdf = Pdf::loadView('pdf.cotizacion', [
+                'cliente' => $cliente,
+                'cotizacion' => $cotGen,
+                'detalles' => $request->cotizaciones
+            ]);
+
+            // 🔵 Guardar temporalmente
+            $pdfPath = storage_path('app/public/cotizacion_' . $cotGen->id . '.pdf');
+            $pdf->save($pdfPath);
+
+            // 🔵 Enviar correo
+            Mail::to($cliente->correo)->send(new CotizacionEnviada($cotGen, $cliente, $pdfPath));
+
             return response()->json([
                 'message' => 'Cotización guardada exitosamente',
                 'id' => $cotGen->id,
             ], 201);
-
         } catch (\Throwable $e) {
             DB::rollBack();
             return response()->json([
@@ -195,18 +214,17 @@ class CotizacionController extends Controller
 
             $cotGen = CotizacionGeneral::findOrFail($id);
 
-            // Actualizar CotizacionGeneral con todos los campos relevantes
+            // Actualizar cotización general
             $cotGen->update([
                 'descripcion' => $request->descripcion,
                 'monto_total' => $request->precio_total,
-                'fecha_inicial' => $request->fecha_inicial, // Campo agregado
-                'fecha_final' => $request->fecha_final,     // Campo agregado
+                'fecha_inicial' => $request->fecha_inicial,
+                'fecha_final' => $request->fecha_final,
                 'dias_entrega' => $request->dias,
                 'id_cliente' => $request->id_cliente,
             ]);
 
-            // Eliminar anteriores y recrear (alternativamente podrías actualizar en cascada si quieres)
-            // Es importante eliminar en el orden correcto para evitar problemas de claves foráneas
+            // Eliminar cotizaciones anteriores y dependencias
             foreach ($cotGen->cotizaciones as $cot) {
                 foreach ($cot->detalles as $det) {
                     CotizacionCaja::where('id_cotizacion_detail', $det->id)->delete();
@@ -215,15 +233,15 @@ class CotizacionController extends Controller
                 $cot->delete();
             }
 
-            // Re-crear estructura
+            // Re-crear estructura de cotizaciones
             foreach ($request->cotizaciones as $cotizacionData) {
                 $cot = Cotizacion::create([
                     'id_cotizacion_general' => $cotGen->id,
-                    'descripcion' => $cotizacionData['descripcion'], // Campo agregado
-                    'cantidad' => $cotizacionData['cantidad'],       // Campo agregado
+                    'descripcion' => $cotizacionData['descripcion'],
+                    'cantidad' => $cotizacionData['cantidad'],
                     'gg' => $cotizacionData['gg'],
                     'utilidad' => $cotizacionData['utilidad'],
-                    'costo_directo' => $cotizacionData['costo_directo'], // Campo agregado
+                    'costo_directo' => $cotizacionData['costo_directo'],
                     'total_cotizaciones' => $cotizacionData['precio_total'],
                 ]);
 
@@ -248,8 +266,26 @@ class CotizacionController extends Controller
 
             DB::commit();
 
-            return response()->json(['message' => 'Cotización actualizada correctamente']);
+            // Obtener cliente
+            $cliente = Cliente::find($request->id_cliente);
 
+            // Generar nuevo PDF
+            $pdf = Pdf::loadView('pdf.cotizacion', [
+                'cliente' => $cliente,
+                'cotizacion' => $cotGen,
+                'detalles' => $request->cotizaciones
+            ]);
+
+            // Guardar PDF temporal
+            $pdfPath = storage_path('app/public/cotizacion_' . $cotGen->id . '.pdf');
+            $pdf->save($pdfPath);
+
+            // Enviar correo con PDF actualizado
+            Mail::to($cliente->correo)->send(new CotizacionEnviada($cotGen, $cliente, $pdfPath));
+
+            return response()->json([
+                'message' => 'Cotización actualizada y enviada correctamente'
+            ]);
         } catch (\Throwable $e) {
             DB::rollBack();
             return response()->json([
@@ -258,7 +294,7 @@ class CotizacionController extends Controller
             ], 500);
         }
     }
-    
+
     public function index()
     {
         try {
@@ -269,7 +305,7 @@ class CotizacionController extends Controller
             ])->orderBy('id', 'desc')->get();
 
             // Formatear los datos para la tabla
-            
+
 
             return response()->json($datos);
         } catch (\Throwable $e) {
