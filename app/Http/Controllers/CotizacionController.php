@@ -84,7 +84,7 @@ class CotizacionController extends Controller
             }
 
             DB::commit();
-            /*
+            
             $cliente = Cliente::find($request->id_cliente);
 
             // 🔵 Generar PDF con vista Blade
@@ -100,8 +100,8 @@ class CotizacionController extends Controller
 
             // 🔵 Enviar correo
             Mail::to($cliente->correo)->send(new CotizacionEnviada($cotGen, $cliente, $pdfPath));
-            */
-            EnviarCotizacionJob::dispatch($cotGen, $request->cotizaciones, $request->id_cliente);
+            
+            // EnviarCotizacionJob::dispatch($cotGen, $request->cotizaciones, $request->id_cliente);
 
             return response()->json([
                 'message' => 'Cotización guardada exitosamente',
@@ -264,7 +264,7 @@ class CotizacionController extends Controller
             }
 
             DB::commit();
-            /*
+            
             // Obtener cliente
             $cliente = Cliente::find($request->id_cliente);
 
@@ -281,8 +281,8 @@ class CotizacionController extends Controller
 
             // Enviar correo con PDF actualizado
             Mail::to($cliente->correo)->send(new CotizacionEnviada($cotGen, $cliente, $pdfPath));
-            */
-            EnviarCotizacionJob::dispatch($cotGen, $request->cotizaciones, $request->id_cliente);
+            
+            // EnviarCotizacionJob::dispatch($cotGen, $request->cotizaciones, $request->id_cliente);
 
             return response()->json([
                 'message' => 'Cotización actualizada y enviada correctamente'
