@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\EnviarCotizacionJob;
 use App\Mail\CotizacionEnviada;
 use App\Models\Cliente;
 use App\Models\Cotizacion;
@@ -83,7 +84,7 @@ class CotizacionController extends Controller
             }
 
             DB::commit();
-
+            /*
             $cliente = Cliente::find($request->id_cliente);
 
             // 🔵 Generar PDF con vista Blade
@@ -99,6 +100,8 @@ class CotizacionController extends Controller
 
             // 🔵 Enviar correo
             Mail::to($cliente->correo)->send(new CotizacionEnviada($cotGen, $cliente, $pdfPath));
+            */
+            EnviarCotizacionJob::dispatch($cotGen, $request->cotizaciones, $request->id_cliente);
 
             return response()->json([
                 'message' => 'Cotización guardada exitosamente',
@@ -116,18 +119,14 @@ class CotizacionController extends Controller
     public function show($id)
     {
         try {
-            // Carga la cotización general con todas las relaciones necesarias:
-            // - cliente: para obtener información del cliente.
-            // - cotizaciones: las cotizaciones individuales asociadas a la general.
-            // - cotizaciones.detalles.cajas: los detalles de caja dentro de cada cotización individual.
-            // - cotizaciones.detalles.servicio: el servicio asociado a cada detalle.
+            
             $cotizacionGeneral = CotizacionGeneral::with([
                 'cliente',
                 'cotizaciones.detalles.cajas',
                 'cotizaciones.detalles.servicio'
             ])->findOrFail($id);
 
-            // Transforma la estructura de la cotización general para que coincida con CotizacionAgregarInterface
+            
             $transformedCotizacion = [
                 'id' => $cotizacionGeneral->id,
                 'descripcion' => $cotizacionGeneral->descripcion,
@@ -181,7 +180,7 @@ class CotizacionController extends Controller
 
             return response()->json($transformedCotizacion);
         } catch (\Exception $e) {
-            // Manejo de errores: si la cotización no se encuentra o hay otro error
+            
             return response()->json([
                 'message' => 'Error al obtener la cotización',
                 'error' => $e->getMessage()
@@ -265,7 +264,7 @@ class CotizacionController extends Controller
             }
 
             DB::commit();
-
+            /*
             // Obtener cliente
             $cliente = Cliente::find($request->id_cliente);
 
@@ -282,6 +281,8 @@ class CotizacionController extends Controller
 
             // Enviar correo con PDF actualizado
             Mail::to($cliente->correo)->send(new CotizacionEnviada($cotGen, $cliente, $pdfPath));
+            */
+            EnviarCotizacionJob::dispatch($cotGen, $request->cotizaciones, $request->id_cliente);
 
             return response()->json([
                 'message' => 'Cotización actualizada y enviada correctamente'

@@ -23,6 +23,9 @@ RUN composer install --no-dev --optimize-autoloader
 # Da permisos
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Comando por defecto: Laravel Queue Worker
+CMD ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--timeout=90"]
+
 # Habilita mod_rewrite
 RUN a2enmod rewrite
 
