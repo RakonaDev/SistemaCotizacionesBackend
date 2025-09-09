@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\EnviarCotizacionJob;
 use App\Mail\CotizacionEnviada;
 use App\Models\Cliente;
 use App\Models\Cotizacion;
@@ -10,8 +9,8 @@ use App\Models\CotizacionCaja;
 use App\Models\CotizacionDetail;
 use App\Models\CotizacionGeneral;
 use Barryvdh\DomPDF\Facade\Pdf;
-use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 

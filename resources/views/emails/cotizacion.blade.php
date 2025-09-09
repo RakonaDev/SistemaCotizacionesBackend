@@ -74,7 +74,7 @@ Contactar Ahora
 ## ⚠️ Información Importante
 
 - ✅ **Validez:** Esta cotización tiene una validez de **30 días calendario**
-- 💳 **Precios:** Los precios incluyen IGV (18%)
+- 💳 **Precios:** Los precios NO incluyen IGV (18%)
 - 💰 **Adelanto:** Se requiere un adelanto del 50% para iniciar los trabajos
 - 📅 **Tiempo:** El tiempo de entrega se cuenta desde la confirmación del pedido
 - 🔄 **Modificaciones:** Cualquier cambio al proyecto original será cotizado por separado
@@ -104,7 +104,7 @@ Para confirmar el proyecto:
 Estamos emocionados por la posibilidad de trabajar contigo en este proyecto. Tu confianza es muy importante para nosotros.
 
 Saludos cordiales,  
-**El Equipo de Tu Empresa**
+**El Equipo de LogosPerú**
 
 @component('mail::subcopy')
 Esta cotización fue generada automáticamente el {{ \Carbon\Carbon::now()->format('d/m/Y H:i:s') }}.  

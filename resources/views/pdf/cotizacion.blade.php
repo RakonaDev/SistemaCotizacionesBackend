@@ -356,7 +356,7 @@
     <!-- Total Summary -->
     <div class="summary-box">
       <h3>Monto Total de la Cotización</h3>
-      <div class="total-amount">S/. {{ number_format($cotizacion->monto_total, 2) }}</div>
+      <div class="total-amount">$. {{ number_format($cotizacion->monto_total, 2) }}</div>
     </div>
 
     <!-- Detailed Cotizaciones -->
@@ -366,9 +366,9 @@
         <h3>{{ $cot['descripcion'] }}</h3>
         <div class="cotizacion-meta">
           <span>Cantidad: {{ $cot['cantidad'] ?? 1 }}</span>
-          <span>Costo Directo: S/. {{ number_format($cot['costo_directo'] ?? 0, 2) }}</span>
-          <span>G.G.: {{ ($cot['gg'] ?? 0) }}%</span>
-          <span>Utilidad: {{ ($cot['utilidad'] ?? 0) }}%</span>
+          <span>Costo Directo: $. {{ number_format($cot['costo_directo'] ?? 0, 2) }}</span>
+          <span>G.G.: $. {{ ($cot['gg'] ?? 0) }}</span>
+          <span>Utilidad: $. {{ ($cot['utilidad'] ?? 0) }}</span>
         </div>
       </div>
 
@@ -402,13 +402,13 @@
             </td>
             <td class="text-right">
               @if($servicio['tipo'] !== 'AREA')
-              S/. {{ number_format($servicio['precio_unit'] ?? 0, 2) }}
+              $. {{ number_format($servicio['precio_unit'] ?? 0, 2) }}
               @else
-              S/. {{ number_format($servicio['costo'] ?? 0, 2) }}/hr
+              $. {{ number_format($servicio['costo'] ?? 0, 2) }}/hr
               @endif
             </td>
             <td class="text-right price">
-              S/. {{ number_format($servicio['subtotal'], 2) }}
+              $. {{ number_format($servicio['subtotal'], 2) }}
             </td>
           </tr>
           @endforeach
@@ -419,19 +419,19 @@
       <div class="costs-summary">
         <div class="costs-row">
           <span>Costo Directo:</span>
-          <span>S/. {{ number_format($cot['costo_directo'] ?? 0, 2) }}</span>
+          <span>$. {{ number_format($cot['costo_directo'] ?? 0, 2) }}</span>
         </div>
         <div class="costs-row">
-          <span>Gastos Generales ({{ ($cot['gg'] ?? 0) }}%):</span>
-          <span>S/. {{ number_format(($cot['costo_directo'] ?? 0) * (($cot['gg'] ?? 0) / 100), 2) }}</span>
+          <span>Gastos Generales %:</span>
+          <span>$. {{ number_format(($cot['gg'] ?? 0), 2) }}</span>
         </div>
         <div class="costs-row">
-          <span>Utilidad ({{ ($cot['utilidad'] ?? 0) }}%):</span>
-          <span>S/. {{ number_format(($cot['costo_directo'] ?? 0) * (($cot['utilidad'] ?? 0) / 100), 2) }}</span>
+          <span>Utilidad %:</span>
+          <span>$. {{ number_format(($cot['utilidad'] ?? 0), 2) }}</span>
         </div>
         <div class="costs-row total">
           <span>Total de esta sección:</span>
-          <span>S/. {{ number_format($cot['precio_total'] ?? 0, 2) }}</span>
+          <span>$. {{ number_format($cot['precio_total'] ?? 0, 2) }}</span>
         </div>
       </div>
     </div>

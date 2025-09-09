@@ -6,6 +6,7 @@ use App\Models\Cliente;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Spatie\SimpleExcel\SimpleExcelWriter;
 
 class ClientesController extends Controller
 {
@@ -124,5 +125,47 @@ class ClientesController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function exportarAExcel()
+    {
+
+        $clientes = Cliente::with('cotizacionesGenerales')->get();
+        $fileName = 'clientes_' . now()->format('Ymd_His') . '.xlsx';
+        $filePath = storage_path('app/public/' . $fileName);
+        $headers = [
+            'ID',
+            'Nombre',
+            'Direccion',
+            'RUC',
+            'Correo',
+            'Telefono',
+            'Cantidad Cotizaciones Generales',
+            'Creado en',
+            'Actualizado en',
+        ];
+
+        $dataToExport = $clientes->map(function ($cliente) {
+            return [
+                'ID' => $cliente->id,
+                'Nombre' => $cliente->nombre,
+                'Direccion' => $cliente->direccion,
+                'RUC' => $cliente->ruc,
+                'Correo' => $cliente->correo,
+                'Telefono' => $cliente->telefono,
+                'Cantidad Cotizaciones Generales' => $cliente->cotizacionesGenerales->count(), // Aquí obtenemos el length
+                'Creado en' => $cliente->created_at, // Ya están formateados por los accessors del modelo
+                'Actualizado en' => $cliente->updated_at, // Ya están formateados por los accessors del modelo
+            ];
+        });
+
+        SimpleExcelWriter::create($filePath)
+            ->addHeader($headers)
+            ->addRows($dataToExport->toArray())
+            ->close();
+
+
+        return response()->download($filePath, $fileName)->deleteFileAfterSend(true);
+
     }
 }

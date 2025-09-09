@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 class Cliente extends Model
 {
     use HasFactory, Notifiable;
-
+    
     protected $fillable = [
         'nombre',
         'direccion',
@@ -17,4 +17,21 @@ class Cliente extends Model
         'correo',
         'telefono',
     ];
+
+    protected $dates = ['created_at', 'updated_at'];
+
+    public function getCreatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('d/m/Y H:i:s');
+    }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('d/m/Y H:i:s');
+    }
+
+    public function cotizacionesGenerales()
+    {
+        return $this->hasMany(CotizacionGeneral::class, 'id_cliente');
+    }
 }
